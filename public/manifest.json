@@ -1,7 +1,8 @@
 {
   "name": "sabG — Grocery Delivery",
   "short_name": "sabG",
-  "description": "Fresh groceries delivered to your door in minutes",
+  "description": "Fresh groceries delivered to your door in minutes. Order online and get delivery in as fast as 8 minutes.",
+  "id": "/",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -9,7 +10,12 @@
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "en-IN",
-  "categories": ["food", "shopping"],
+  "dir": "ltr",
+  "categories": [
+    "food",
+    "shopping",
+    "lifestyle"
+  ],
   "icons": [
     {
       "src": "/icon-192.png",
@@ -23,5 +29,29 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "sabG Grocery App"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Shop Now",
+      "short_name": "Shop",
+      "description": "Browse groceries",
+      "url": "/",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false
 }
