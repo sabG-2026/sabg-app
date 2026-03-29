@@ -56,6 +56,20 @@ export default function App() {
   }, []);
 
   const fetchSettings = useCallback(async () => {
+    // Try config table first (written by admin)
+    const { data: configData } = await supabase
+      .from("config").select("*").eq("key", "settings").single();
+    if (configData?.value) {
+      const v = configData.value;
+      setSettings({
+        deliveryFee:  v.deliveryFee  ?? v.delivery_fee  ?? 30,
+        platformFee:  v.platformFee  ?? v.platform_fee  ?? 5,
+        taxRate:      v.taxRate      ?? v.tax_rate      ?? 5,
+        deliveryTime: v.deliveryTime ?? v.delivery_time ?? 8,
+      });
+      return;
+    }
+    // Fallback to settings table
     const { data } = await supabase.from("settings").select("*").eq("id", 1).single();
     if (data) {
       setSettings({
@@ -80,6 +94,7 @@ export default function App() {
       subscribeTable("offers",     fetchOffers),
       subscribeTable("banners",    fetchBanners),
       subscribeTable("settings",   fetchSettings),
+      subscribeTable("config",      fetchSettings),
     ];
     return () => { mounted = false; channels.forEach(ch => supabase.removeChannel(ch)); };
   }, [fetchProducts, fetchCategories, fetchOffers, fetchBanners, fetchSettings, subscribeTable]);
