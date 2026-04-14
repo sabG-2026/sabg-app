@@ -948,7 +948,7 @@ function Checkout(){
 
   return(
     // ✅ FIX: increased paddingBottom to 160 so content isn't hidden behind fixed button
-    <div style={{background:bg,minHeight:"100vh",paddingBottom:160}}>
+    <div style={{background:bg,minHeight:"100vh",paddingBottom:200}}>
       <div style={{background:card,borderBottom:`1px solid ${dk?"#1e293b":"#f1f5f9"}`,padding:16,position:"sticky",top:0,zIndex:50,display:"flex",alignItems:"center",gap:12}}>
         <button onClick={()=>setPage("cart")} style={{background:dk?"#1e293b":"#f1f5f9",border:"none",borderRadius:12,padding:"9px 14px",cursor:"pointer",fontSize:17,color:tx,fontFamily:"inherit",display:"flex",alignItems:"center",gap:6}}>← Cart</button>
         <h2 style={{margin:0,fontSize:18,fontWeight:900,color:tx}}>Checkout</h2>
