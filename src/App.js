@@ -139,7 +139,6 @@ function AdminStockEditor({product,onUpdated}){
   );
 }
 
-// ── AUTH MODAL — FIXED ────────────────────────────────────────────────────────
 function AuthModal({onClose}){
   const{dk,toast}=useContext(Ctx);
   const[mode,setMode]=useState("login");
@@ -155,16 +154,10 @@ function AuthModal({onClose}){
     setBusy(true);setErr("");
     if(mode==="signup"){
       if(!name.trim()){setErr("Name is required");setBusy(false);return;}
-      // ✅ FIX: Save name to localStorage BEFORE signup
-      // Profile will be created in onAuthStateChange after email confirmation
       localStorage.setItem("sabg_signup_name",name.trim());
       const{error}=await supabase.auth.signUp({email,password:pw});
       if(error){setErr(error.message);setBusy(false);return;}
-      setBusy(false);
-      setErr("");
-      // Show confirmation message instead of closing
-      setMode("confirm");
-      return;
+      setBusy(false);setErr("");setMode("confirm");return;
     }else{
       const{error}=await supabase.auth.signInWithPassword({email,password:pw});
       if(error){setErr(error.message);setBusy(false);return;}
@@ -172,7 +165,6 @@ function AuthModal({onClose}){
     setBusy(false);toast(`Welcome to ${APP_NAME}! 🎉`,"👋");onClose();
   };
 
-  // Confirmation screen after signup
   if(mode==="confirm")return(
     <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.7)",zIndex:1000,display:"flex",alignItems:"flex-end",justifyContent:"center"}} onClick={onClose}>
       <div onClick={e=>e.stopPropagation()} style={{background:bg,borderRadius:"24px 24px 0 0",width:"100%",maxWidth:480,padding:"28px 24px 52px",textAlign:"center",animation:"slideUp 0.3s ease"}}>
@@ -400,7 +392,6 @@ function ProductDetail(){
   );
 }
 
-// ── PROVIDER — FIXED AUTH ─────────────────────────────────────────────────────
 function Provider({children}){
   const[products,setProducts]=useState([]);
   const[categories,setCategories]=useState([]);
@@ -428,17 +419,14 @@ function Provider({children}){
 
   useEffect(()=>{localStorage.setItem("sabg_dk",dk?"1":"0");},[dk]);
 
-  // ✅ FIXED AUTH — profile created on SIGNED_IN event, not during signup
   useEffect(()=>{
     supabase.auth.getSession().then(({data:{session}})=>setUser(session?.user||null));
     const{data:{subscription}}=supabase.auth.onAuthStateChange(async(event,session)=>{
       setUser(session?.user||null);
       if(event==="SIGNED_IN"&&session?.user){
         const uid=session.user.id;
-        // Check if profile already exists
         const{data:existing}=await supabase.from("user_profiles").select("id").eq("id",uid).single();
         if(!existing){
-          // Create profile — use saved name from signup or fallback to email prefix
           const storedName=localStorage.getItem("sabg_signup_name")||session.user.email?.split("@")[0]||"User";
           const rc=Math.random().toString(36).slice(2,8).toUpperCase();
           await supabase.from("user_profiles").insert([{id:uid,name:storedName,referral_code:rc}]);
@@ -959,7 +947,8 @@ function Checkout(){
   );
 
   return(
-    <div style={{background:bg,minHeight:"100vh",paddingBottom:110}}>
+    // ✅ FIX: increased paddingBottom to 160 so content isn't hidden behind fixed button
+    <div style={{background:bg,minHeight:"100vh",paddingBottom:160}}>
       <div style={{background:card,borderBottom:`1px solid ${dk?"#1e293b":"#f1f5f9"}`,padding:16,position:"sticky",top:0,zIndex:50,display:"flex",alignItems:"center",gap:12}}>
         <button onClick={()=>setPage("cart")} style={{background:dk?"#1e293b":"#f1f5f9",border:"none",borderRadius:12,padding:"9px 14px",cursor:"pointer",fontSize:17,color:tx,fontFamily:"inherit",display:"flex",alignItems:"center",gap:6}}>← Cart</button>
         <h2 style={{margin:0,fontSize:18,fontWeight:900,color:tx}}>Checkout</h2>
@@ -1054,10 +1043,12 @@ function Checkout(){
           <span style={{fontWeight:900,fontSize:22,color:"#22c55e"}}>₹{total}</span>
         </div>
       </div>
-      <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:480,padding:16,background:card,borderTop:`1px solid ${dk?"#1e293b":"#f1f5f9"}`,boxSizing:"border-box"}}>
-        {!addr.trim()&&<p style={{margin:"0 0 8px",fontSize:12,color:"#f59f00",fontWeight:700,textAlign:"center"}}>📍 Please add a delivery address to continue</p>}
+
+      {/* ✅ FIX: padding "12px 16px 28px" lifts button above phone home bar */}
+      <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:480,padding:"12px 16px 28px",background:card,borderTop:`1px solid ${dk?"#1e293b":"#f1f5f9"}`,boxSizing:"border-box",boxShadow:"0 -4px 20px rgba(0,0,0,0.08)"}}>
+        {!addr.trim()&&<p style={{margin:"0 0 10px",fontSize:12,color:"#f59f00",fontWeight:700,textAlign:"center",background:"#fef3c7",borderRadius:10,padding:"8px 12px"}}>📍 Please add a delivery address to continue</p>}
         <button onClick={handleOrder} disabled={busy||gpsLoad} className="tap-scale"
-          style={{width:"100%",background:busy?"#94a3b8":"linear-gradient(135deg,#22c55e,#16a34a)",color:"#fff",border:"none",borderRadius:18,padding:"17px 0",fontWeight:900,fontSize:16,cursor:busy?"not-allowed":"pointer",fontFamily:"inherit",boxShadow:busy?"none":"0 6px 22px rgba(34,197,94,0.4)",transition:"all 0.3s"}}>
+          style={{width:"100%",background:busy?"#94a3b8":"linear-gradient(135deg,#22c55e,#16a34a)",color:"#fff",border:"none",borderRadius:18,padding:"17px 0",fontWeight:900,fontSize:16,cursor:busy?"not-allowed":"pointer",fontFamily:"inherit",boxShadow:busy?"none":"0 6px 22px rgba(34,197,94,0.4)",transition:"all 0.3s",display:"block"}}>
           {busy?"Placing Order...":`Place Order · Cash on Delivery · ₹${total}`}
         </button>
       </div>
