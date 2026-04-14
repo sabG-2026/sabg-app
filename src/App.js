@@ -1045,7 +1045,7 @@ function Checkout(){
       </div>
 
       {/* ✅ FIX: padding "12px 16px 28px" lifts button above phone home bar */}
-      <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:480,padding:"12px 16px 28px",background:card,borderTop:`1px solid ${dk?"#1e293b":"#f1f5f9"}`,boxSizing:"border-box",boxShadow:"0 -4px 20px rgba(0,0,0,0.08)"}}>
+      <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:480,padding:"14px 18px 30px",background:card,borderTop:`1px solid ${dk?"#1e293b":"#f1f5f9"}`,boxSizing:"border-box",boxShadow:"0 -4px 20px rgba(0,0,0,0.08)"}}>
         {!addr.trim()&&<p style={{margin:"0 0 10px",fontSize:12,color:"#f59f00",fontWeight:700,textAlign:"center",background:"#fef3c7",borderRadius:10,padding:"8px 12px"}}>📍 Please add a delivery address to continue</p>}
         <button onClick={handleOrder} disabled={busy||gpsLoad} className="tap-scale"
           style={{width:"100%",background:busy?"#94a3b8":"linear-gradient(135deg,#22c55e,#16a34a)",color:"#fff",border:"none",borderRadius:18,padding:"17px 0",fontWeight:900,fontSize:16,cursor:busy?"not-allowed":"pointer",fontFamily:"inherit",boxShadow:busy?"none":"0 6px 22px rgba(34,197,94,0.4)",transition:"all 0.3s",display:"block"}}>
